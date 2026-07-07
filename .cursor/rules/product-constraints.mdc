@@ -1,0 +1,57 @@
+---
+description: Non-negotiable product and legal-safety constraints for CrossExam AI
+alwaysApply: true
+---
+
+# CrossExam AI — Core Constraints
+
+CrossExam AI is a **rehearsal tool for attorneys practicing cross-examination
+for IDEA due process hearings** — not a legal advice product. See
+`README.md` and `ARCHITECTURE.md` for full context.
+
+## Hard constraints (do not violate these when writing code, docs, or fixtures)
+
+- **No real case data, ever.** Any case file, transcript, exhibit, or fixture
+  used in code, tests, seeds, or demos must be entirely synthetic/
+  hypothetical. Never introduce real client information, real party names,
+  or real case facts, regardless of who asks — this is an attorney-client
+  privilege and confidentiality requirement, not a style preference.
+- **No legal strategy or legal advice output.** Do not build features that
+  advise on case strategy, predict outcomes, or evaluate the merits of a
+  real case. The product's job is to rehearse examination technique, not to
+  advise.
+- **Legal grounding must be traceable, not freeform.** The hearing officer's
+  rulings and opposing counsel's objections must be generated from retrieved
+  statute/regulation/decision text (RAG), with the source passage traceable.
+  Never implement these personas as unconstrained freeform LLM reasoning —
+  that risks teaching attorneys incorrect procedural habits.
+- **The witness must resist leading questions realistically.** Do not tune
+  or prompt the witness persona to be agreeable or compliant. An
+  over-compliant "yes machine" witness defeats the entire training purpose.
+  This is the single most important behavior in the system.
+- **Opposing counsel objects on cross-exam grounds, never "leading."**
+  Leading questions are permitted on cross-examination. Valid objection
+  grounds: argumentative, asked-and-answered, compound, non-responsive, etc.
+- **Always disclose the rehearsal-tool nature.** Any user-facing surface
+  (README, in-app UI, onboarding) must clearly state this is a rehearsal
+  tool, not legal advice, and does not substitute for attorney judgment.
+
+## Cost-consciousness
+
+- Prefer local/embedded solutions over managed services with non-usage-based
+  minimum costs. Do not introduce Amazon OpenSearch Serverless or similar
+  always-on managed vector DBs for the static/bounded legal corpus — use
+  local FAISS/Chroma embeddings instead (see `rag/`).
+- Be aware Amazon Bedrock AgentCore Runtime Memory bills for idle session
+  time, not just active processing — design session lifecycle deliberately.
+
+## Architecture choices already made — don't relitigate silently
+
+If you think one of these should change, raise it explicitly rather than
+substituting a different choice mid-implementation:
+
+- Orchestration: LangGraph (explicit state machine), not Strands/CrewAI.
+- Vector store: local FAISS/Chroma, not a managed vector DB.
+- Hosting: Amazon Bedrock AgentCore Runtime; model is Claude via Bedrock.
+- Frontend: Next.js static export (`output: 'export'`) on S3 + CloudFront —
+  no SSR/API routes. Dynamic work goes through a backend proxy Lambda.

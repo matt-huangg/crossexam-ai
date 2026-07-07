@@ -1,0 +1,29 @@
+---
+description: Monorepo layout and where new code belongs
+alwaysApply: true
+---
+
+# Repository Structure
+
+CrossExam AI is a monorepo. Place new code in the right top-level directory
+rather than creating new top-level directories or mixing concerns:
+
+```
+crossexam-ai/
+├── frontend/   # Next.js static-export app (client-side SPA only, no SSR/API routes)
+├── backend/    # LangGraph agent (witness, opposing counsel, hearing officer, debrief nodes), deployed to AgentCore Runtime
+├── rag/        # Corpus ingestion (statute, regs, case decisions) + local embedding pipeline (FAISS/Chroma)
+├── infra/      # S3 / CloudFront / Lambda deployment config
+└── docs/       # Architecture notes, case file schema, persona design
+```
+
+- Backend proxy/Lambda code (SigV4 signing, streaming passthrough to
+  AgentCore) belongs in `infra/` or a dedicated proxy subfolder, not mixed
+  into `frontend/`, since the browser must never hold AWS credentials.
+- New persona logic (witness / opposing counsel / hearing officer / debrief)
+  belongs in `backend/` as distinct LangGraph nodes — do not collapse
+  personas into a single prompt/role.
+- New corpus sources or embedding logic belong in `rag/`.
+- Architecture/design decisions and schema definitions (e.g. the per-session
+  case file schema) belong in `docs/`, and significant architectural changes
+  should also be reflected in `ARCHITECTURE.md` at the repo root.
