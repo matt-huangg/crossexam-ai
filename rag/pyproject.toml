@@ -4,24 +4,23 @@ version = "0.1.0"
 description = "Corpus ingestion, embedding, and retrieval pipeline for CrossExam AI"
 requires-python = ">=3.11"
 
-# TODO(you): fill in the dependencies list below. For each, we need a package
-# that lets us:
-#   - talk to Amazon Bedrock (to call the Titan embedding model)     -> ?
-#   - store/query embeddings in a local Chroma vector store          -> ?
-#   - extract text from decision PDFs                                -> ?
-#   - make HTTP requests (to fetch statute/CFR text from public APIs) -> ?
-#   - run our test suite                                              -> ?
-#
-# Look up the current PyPI package name for each on pypi.org, and add it here
-# as a string like "package-name>=X.Y" (pin a reasonable minimum version).
+# - talk to Amazon Bedrock (Titan embedding model)                  -> boto3
+# - store/query embeddings in a local Chroma vector store           -> chromadb
+# - extract text from decision PDFs                                 -> pymupdf
+# - fetch statute/CFR text from public HTTP APIs                    -> httpx
+# - parse statute HTML from uscode.house.gov                        -> beautifulsoup4 + lxml
 dependencies = [
-    # TODO
+    "boto3>=1.34",
+    "chromadb>=0.5",
+    "pymupdf>=1.24",
+    "httpx>=0.27",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
 ]
 
 [dependency-groups]
 dev = [
-    # TODO: add the testing package here too (or leave test deps in
-    # `dependencies` above if you prefer — either is fine, just be consistent)
+    "pytest>=8.0",
 ]
 
 [tool.pytest.ini_options]
