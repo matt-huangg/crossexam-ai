@@ -1,0 +1,28 @@
+[project]
+name = "crossexam-rag"
+version = "0.1.0"
+description = "Corpus ingestion, embedding, and retrieval pipeline for CrossExam AI"
+requires-python = ">=3.11"
+
+# TODO(you): fill in the dependencies list below. For each, we need a package
+# that lets us:
+#   - talk to Amazon Bedrock (to call the Titan embedding model)     -> ?
+#   - store/query embeddings in a local Chroma vector store          -> ?
+#   - extract text from decision PDFs                                -> ?
+#   - make HTTP requests (to fetch statute/CFR text from public APIs) -> ?
+#   - run our test suite                                              -> ?
+#
+# Look up the current PyPI package name for each on pypi.org, and add it here
+# as a string like "package-name>=X.Y" (pin a reasonable minimum version).
+dependencies = [
+    # TODO
+]
+
+[dependency-groups]
+dev = [
+    # TODO: add the testing package here too (or leave test deps in
+    # `dependencies` above if you prefer — either is fine, just be consistent)
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -141,3 +141,18 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# rag/ regenerable build artifacts (see rag/README.md to rebuild)
+rag/data/raw/
+rag/data/processed/
+rag/index/
+!rag/data/raw/.gitkeep
+!rag/data/processed/.gitkeep
+!rag/index/.gitkeep
