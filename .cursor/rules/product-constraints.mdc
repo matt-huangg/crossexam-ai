@@ -35,6 +35,19 @@ for IDEA due process hearings** — not a legal advice product. See
 - **Always disclose the rehearsal-tool nature.** Any user-facing surface
   (README, in-app UI, onboarding) must clearly state this is a rehearsal
   tool, not legal advice, and does not substitute for attorney judgment.
+- **Ingestion/extraction of source-of-truth legal text must be deterministic,
+  not agent/LLM-based.** `rag/ingest/*.py` (fetching and parsing statute,
+  regulation, and decision text) must use plain deterministic parsing
+  (regex, XML/DOM traversal, etc.), never an LLM asked to "read and extract"
+  the text. This source material — IDEA statute, 34 CFR Part 300, published
+  OAH decisions — is regulated, compliance-sensitive legal text where exact
+  textual fidelity to the original is a hard requirement, not a quality
+  nice-to-have: an LLM extraction step could introduce an undetectable
+  paraphrase or dropped clause that becomes permanently baked into the
+  "ground truth" retrieval corpus every ruling cites as authoritative. See
+  `ARCHITECTURE.md` for full rationale. LLM/agent assistance is fine
+  elsewhere in the pipeline where a human reviews the result or the stakes
+  are inherently low (e.g. curating which sample decisions to include).
 
 ## Cost-consciousness
 

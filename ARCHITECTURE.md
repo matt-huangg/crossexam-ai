@@ -93,6 +93,30 @@ and grounding a different kind of output:
   session start, and is discarded/archived with the session — it is never
   merged into the shared static corpus.
 
+### Why ingestion parsing is deterministic code, not LLM-assisted
+
+`fetch_cfr.py`, `fetch_statute.py`, and the decision-loading logic that
+extract section/citation text from raw XML/HTML are, and must remain,
+plain deterministic parsing code — not an LLM asked to "read and extract
+the text." An LLM doing that extraction could paraphrase, drop a
+qualifying clause, or misattribute a section number, and there would be no
+way to detect it. That corrupted text would then become the "ground
+truth" every hearing officer ruling and opposing counsel objection cites as
+authoritative — a hallucination baked silently into the retrieval corpus
+itself, one layer earlier and far harder to catch than a hallucination in
+a model's final answer. Deterministic code either extracts the exact
+source text correctly or throws a visible, debuggable error; there is no
+"close enough" middle ground, which is exactly what a legally-verifiable
+corpus requires.
+
+LLM/agent assistance is appropriate elsewhere in this pipeline where a
+human reviews the result or the stakes are inherently low: e.g. helping
+curate which sample decisions to include (Corpus 2, Phase 0) by flagging
+candidates that look like good examples of a given objection type, or
+later auto-tagging decisions by topic for retrieval filtering as the
+corpus scales. It is not appropriate for deciding what text becomes part
+of the authoritative corpus in the first place.
+
 ### Retrieval at inference time
 
 - Each persona node queries only its own retrieval scope (table above) —
