@@ -1,0 +1,47 @@
+---
+description: Require explanatory docstrings and inline comments in project code
+alwaysApply: true
+---
+
+# Docstrings and inline comments
+
+When writing or editing code in this repo, always include:
+
+1. **Module / file docstring** — what the file does and why it exists (not just a restatement of the filename).
+2. **Function / class / method docstrings** — purpose, non-obvious inputs/outputs, and important edge cases.
+3. **Inline comments** — explain *why* for non-obvious logic: regex choices, packing thresholds, skipped records, API quirks, legal/domain constraints, etc.
+
+## Style
+
+- Prefer the explanatory tone already used in `rag/ingest/` (teach the reader, don't just narrate `i += 1`).
+- Comment the decision, not the syntax: bad `# increment i`; good `# skip (1)/(2) so numbered paras stay with parent (a)/(b)`.
+- Keep comments accurate; update them when the code changes.
+- Do not add noisy comments on every trivial line — focus on intent, tradeoffs, and gotchas.
+
+## Examples
+
+```python
+# ❌ BAD — no docstring, magic without explanation
+def pack(blocks, n):
+    out = []
+    cur = []
+    for b in blocks:
+        if sum(map(len, cur)) + len(b) > n:
+            out.append("\n".join(cur))
+            cur = [b]
+        else:
+            cur.append(b)
+    return out
+
+# ✅ GOOD — docstring + why-comments
+def pack_blocks(blocks: list[str], target_chars: int) -> list[str]:
+    """Pack subsection blocks into chunks near target_chars.
+
+    Consecutive (a)/(b)/(c) blocks stay together when they fit, so retrieval
+    returns a coherent legal unit instead of a mid-sentence fragment.
+    """
+    # Flush before adding the next block when it would blow the soft target.
+    # Soft (not hard) so a slightly-over chunk is preferred to orphaning a
+    # tiny leftover subsection in its own nearly-empty chunk.
+    ...
+```

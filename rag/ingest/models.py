@@ -47,3 +47,25 @@ class LegalSection(BaseModel):
     heading: str = Field(min_length=1)        # section title, e.g. "Prior notice by the public agency"
     text: str = Field(min_length=1)            # full section body text
     source_url: str = Field(min_length=1)       # where this was fetched from, for traceability
+
+
+class LegalChunk(BaseModel):
+    """One retrieval-sized piece of a LegalSection, after chunking.
+
+    Long sections (e.g. 20 U.S.C. § 1415) are split so similarity search
+    returns a focused passage rather than an entire multi-page section.
+    Short sections stay as a single chunk (chunk_index=0, chunk_count=1).
+
+    Every chunk keeps the parent citation/heading/source_url so a retrieved
+    hit can be traced back to the authoritative source without joining
+    another table.
+    """
+
+    chunk_id: str = Field(min_length=1)  # stable id, e.g. "34 CFR § 300.503#0"
+    source_type: Literal["statute", "cfr"]
+    citation: str = Field(min_length=1)
+    heading: str = Field(min_length=1)
+    text: str = Field(min_length=1)  # chunk body (may include a citation prefix)
+    source_url: str = Field(min_length=1)
+    chunk_index: int = Field(ge=0)
+    chunk_count: int = Field(ge=1)

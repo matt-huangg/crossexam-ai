@@ -42,12 +42,25 @@ import xml.etree.ElementTree as ET
 
 import httpx
 
+from cache import (
+    PROCESSED_DIR,
+    RAW_DIR,
+    load_meta,
+    load_processed,
+    load_raw_text,
+    save_meta,
+    save_processed,
+    save_raw_text,
+)
 from models import LegalSection
 
 TITLES_URL = "https://www.ecfr.gov/api/versioner/v1/titles.json"
 FULL_TEXT_URL_TEMPLATE = "https://www.ecfr.gov/api/versioner/v1/full/{date}/title-34.xml"
 CFR_TITLE_NUMBER = 34
 CFR_PART_NUMBER = 300
+CFR_RAW_PATH = RAW_DIR / "34-cfr-300.xml"
+CFR_META_PATH = RAW_DIR / "34-cfr-300.meta.json"
+CFR_PROCESSED_PATH = PROCESSED_DIR / "34-cfr-300.json"
 
 
 def get_latest_title_34_date() -> str:
@@ -104,14 +117,33 @@ def parse_sections(xml_text: str, source_url: str) -> list[LegalSection]:
     return sections
 
 
-def main() -> list[LegalSection]:
-    date = get_latest_title_34_date()
-    xml_text = fetch_part_300_xml(date)
-    source_url = FULL_TEXT_URL_TEMPLATE.format(date=date)
-    # TODO(optional): cache xml_text to ../data/raw/34-cfr-300.xml so
-    # re-running this script during development doesn't re-hit the API
-    # every time. Not required to get this concept working end-to-end.
-    return parse_sections(xml_text, source_url=source_url)
+def main(*, use_cache: bool = True) -> list[LegalSection]:
+    if use_cache:
+        cached = load_processed(CFR_PROCESSED_PATH)
+        if cached is not None:
+            return cached
+
+    if use_cache and (xml_text := load_raw_text(CFR_RAW_PATH)) is not None:
+        meta = load_meta(CFR_META_PATH) or {}
+        source_url = meta.get(
+            "source_url",
+            FULL_TEXT_URL_TEMPLATE.format(date=meta.get("issue_date", "unknown")),
+        )
+    else:
+        date = get_latest_title_34_date()
+        xml_text = fetch_part_300_xml(date)
+        source_url = FULL_TEXT_URL_TEMPLATE.format(date=date)
+        if use_cache:
+            save_raw_text(CFR_RAW_PATH, xml_text)
+            save_meta(
+                CFR_META_PATH,
+                {"issue_date": date, "source_url": source_url},
+            )
+
+    sections = parse_sections(xml_text, source_url=source_url)
+    if use_cache:
+        save_processed(CFR_PROCESSED_PATH, sections)
+    return sections
 
 
 if __name__ == "__main__":
