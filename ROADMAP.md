@@ -8,13 +8,15 @@ simulation. See [`README.md`](./README.md) for scope framing and
 
 Groundwork that everything else depends on.
 
-- [ ] Finalize which state's Office of Administrative Hearings supplies the
+- [x] Finalize which state's Office of Administrative Hearings supplies the
       published due process decision corpus.
+      → California OAH; San Diego–focused MVP slice. See
+      [`docs/oah-decision-corpus.md`](./docs/oah-decision-corpus.md).
 - [ ] Define the synthetic case file schema (facts, witness role, exhibits)
       — see `docs/`. No real case data at any point, including here.
-- [ ] Ingest and embed IDEA statute + 34 CFR Part 300 (`rag/`).
+- [x] Ingest and embed IDEA statute + 34 CFR Part 300 (`rag/`).
 - [ ] Ingest and embed the chosen state's published due process decisions
-      (`rag/`).
+      (`rag/`). Stub: `rag/ingest/fetch_decisions.py`.
 - [ ] Build 1–2 fully synthetic demo case files for development/testing.
 - [ ] Stand up the LangGraph state machine skeleton (`backend/`) with the
       four persona nodes as stubs (no retrieval yet).

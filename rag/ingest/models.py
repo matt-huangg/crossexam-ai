@@ -1,7 +1,7 @@
 """Shared record shapes used across the ingestion pipeline.
 
-Keeping this separate (rather than defining LegalSection inside fetch_cfr.py
-or fetch_statute.py) means chunk.py and build_index.py (later concepts) can
+Keeping this separate (rather than defining LegalSection / HearingDecision
+inside individual fetch_*.py modules) means chunk.py and build_index.py can
 depend on one stable shape regardless of which fetcher produced it.
 
 Uses pydantic rather than a plain dataclass for two reasons:
@@ -49,6 +49,30 @@ class LegalSection(BaseModel):
     source_url: str = Field(min_length=1)       # where this was fetched from, for traceability
 
 
+class HearingDecision(BaseModel):
+    """One published OAH due process decision, before chunking.
+
+    Parallel to LegalSection, but for administrative hearing decisions
+    (Corpus 2). Text must be the exact extracted PDF/HTML body — never an
+    LLM paraphrase. Optional enrichment fields (tags, summaries) belong
+    elsewhere and must not replace ``text`` as the citable passage.
+
+    See ``docs/oah-decision-corpus.md`` for California / San Diego MVP scope.
+    """
+
+    source_type: Literal["decision"] = "decision"
+    # OAH case number as used in filenames / captions, e.g. "2024090930".
+    case_id: str = Field(min_length=1)
+    citation: str = Field(min_length=1)  # e.g. "OAH 2024090930"
+    # Local educational agency named in the caption, e.g. "San Diego Unified School District".
+    lea: str = Field(min_length=1)
+    # ISO date when available (YYYY-MM-DD); empty string only if truly unknown after parse.
+    decision_date: str = Field(default="")
+    heading: str = Field(min_length=1)  # short title / caption line
+    text: str = Field(min_length=1)  # full extracted decision body
+    source_url: str = Field(min_length=1)
+
+
 class LegalChunk(BaseModel):
     """One retrieval-sized piece of a LegalSection, after chunking.
 
@@ -59,6 +83,10 @@ class LegalChunk(BaseModel):
     Every chunk keeps the parent citation/heading/source_url so a retrieved
     hit can be traced back to the authoritative source without joining
     another table.
+
+    Note: decision chunks will either extend ``source_type`` to include
+    ``"decision"`` or use a sibling chunk model when fetch_decisions.py
+    is wired into chunk.py / build_index.py.
     """
 
     chunk_id: str = Field(min_length=1)  # stable id, e.g. "34 CFR § 300.503#0"

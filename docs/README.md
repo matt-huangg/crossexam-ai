@@ -3,7 +3,13 @@
 Architecture notes, case file schema, and persona design that are more
 detailed or more likely to change than the top-level `../ARCHITECTURE.md`.
 
-Planned documents:
+Documents:
+
+- [`oah-decision-corpus.md`](./oah-decision-corpus.md) — locked MVP scope
+  for California OAH published due process decisions (San Diego–focused,
+  official PDF sources, time range).
+
+Planned:
 
 - `case-file-schema.md` — schema for the per-session synthetic case file
   (facts, witness role, exhibits) that grounds the witness persona.

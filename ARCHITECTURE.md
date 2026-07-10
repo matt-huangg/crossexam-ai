@@ -191,10 +191,11 @@ Claude (Amazon Bedrock)
 These are intentionally left open pending further decisions — flagged here
 rather than guessed at silently:
 
-- **Vector store**: FAISS vs. Chroma for the local embedding store — not
-  yet finalized.
-- **State OAH**: which state's Office of Administrative Hearings decisions
-  form the precedent corpus for the MVP — not yet finalized.
+- **Vector store**: local Chroma under `rag/index/chroma/` for now
+  (production embedding model / packaging still open).
+- **State OAH**: California OAH Special Education; MVP slice is San Diego
+  Unified (last ~5 years), expandable to 2013→present / statewide. See
+  [`docs/oah-decision-corpus.md`](./docs/oah-decision-corpus.md).
 - **Embedding model**: which embedding model for the RAG corpus (e.g. a
   Bedrock embedding model vs. another provider) — not yet finalized.
 - **Session lifecycle**: precise rules for when an AgentCore Memory session
