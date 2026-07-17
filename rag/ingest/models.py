@@ -58,7 +58,7 @@ class HearingDecision(BaseModel):
     LLM paraphrase. Optional enrichment fields (tags, summaries) belong
     elsewhere and must not replace ``text`` as the citable passage.
 
-    See ``docs/oah-decision-corpus.md`` for California / San Diego MVP scope.
+    See ``docs/oah-decision-corpus.md`` for statewide California OAH scope.
     """
 
     source_type: Literal["decision"] = "decision"

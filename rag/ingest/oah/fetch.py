@@ -1,12 +1,12 @@
-"""Orchestrate OAH decision ingest: discover → download → parse → filter.
+"""Orchestrate OAH decision ingest: discover → download → parse.
 
 Thin entrypoint. Heavy lifting lives in:
 
   - ``ingest.oah.discovery`` — MediaSearch PDF listing
   - ``ingest.oah.pdf``       — download + pymupdf extract
-  - ``ingest.oah.parse``     — HearingDecision + LEA filter
+  - ``ingest.oah.parse``     — HearingDecision (+ optional LEA filter)
 
-Corpus scope: ``docs/oah-decision-corpus.md`` (CA OAH, San Diego MVP slice).
+Corpus scope: ``docs/oah-decision-corpus.md`` (statewide CA OAH, ~5-year window).
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ import httpx
 from ingest.cache import PROCESSED_DIR, RAW_DIR, load_models, save_models
 from ingest.models import HearingDecision
 from ingest.oah.discovery import list_candidate_pdf_urls
-from ingest.oah.parse import DEFAULT_LEA_FILTERS, matches_lea_filters, parse_decision
+from ingest.oah.parse import matches_lea_filters, parse_decision
 from ingest.oah.pdf import download_pdf, extract_text_from_pdf
 
 DECISIONS_RAW_DIR = RAW_DIR / "decisions"
@@ -26,13 +26,17 @@ DECISIONS_PROCESSED_PATH = PROCESSED_DIR / "oah-decisions.json"
 def main(
     *,
     use_cache: bool = True,
-    lea_filters: tuple[str, ...] = DEFAULT_LEA_FILTERS,
+    lea_filters: tuple[str, ...] = (),
 ) -> list[HearingDecision]:
-    """Fetch/parse San Diego–area OAH decisions into processed JSON.
+    """Fetch/parse statewide CA OAH decisions into processed JSON.
+
+    By default keeps every AccMod-ish PDF in the discovery year window.
+    Pass ``lea_filters`` (e.g. ``("San Diego Unified",)``) only when you
+    want an optional district slice; LEA is always stored on each record.
 
     Cache:
-      data/raw/decisions/*.pdf           — raw PDFs (year window, statewide)
-      data/processed/oah-decisions.json  — LEA-filtered HearingDecision list
+      data/raw/decisions/*.pdf           — raw PDFs
+      data/processed/oah-decisions.json  — HearingDecision list
     """
     if use_cache:
         cached = load_models(DECISIONS_PROCESSED_PATH, HearingDecision)
@@ -58,23 +62,23 @@ def main(
             print(f"  skip {dest.name}: {exc}")
             continue
 
+        # Empty lea_filters → keep all; non-empty → optional district slice.
         if matches_lea_filters(decision.text, decision.lea, lea_filters):
             decisions.append(decision)
 
-    if use_cache:
-        save_models(DECISIONS_PROCESSED_PATH, decisions)
+    save_models(DECISIONS_PROCESSED_PATH, decisions)
     return decisions
 
 
 if __name__ == "__main__":
     print("Listing MediaSearch candidates (last ~5 years)...")
     candidates = list_candidate_pdf_urls()
-    print(f"  {len(candidates)} decision-after-hearing PDFs in year window")
+    print(f"  {len(candidates)} AccMod-ish PDFs in year window")
     for c in candidates[:5]:
         print(f"  - {c.filename}")
 
-    print("\nFetching + filtering for San Diego Unified (downloads PDFs)...")
+    print("\nFetching + parsing statewide CA OAH decisions (downloads PDFs)...")
     results = main(use_cache=False)
-    print(f"Parsed {len(results)} San Diego–matched OAH decisions")
+    print(f"Parsed {len(results)} OAH decisions")
     for d in results[:5]:
         print(f"  {d.citation}: {d.lea} ({d.decision_date})")

@@ -10,7 +10,7 @@ Groundwork that everything else depends on.
 
 - [x] Finalize which state's Office of Administrative Hearings supplies the
       published due process decision corpus.
-      → California OAH; San Diego–focused MVP slice. See
+      → California OAH statewide (last ~5 years). See
       [`docs/oah-decision-corpus.md`](./docs/oah-decision-corpus.md).
 - [ ] Define the synthetic case file schema (facts, witness role, exhibits)
       — see `docs/`. No real case data at any point, including here.

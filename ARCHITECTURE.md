@@ -193,8 +193,8 @@ rather than guessed at silently:
 
 - **Vector store**: local Chroma under `rag/index/chroma/` for now
   (production embedding model / packaging still open).
-- **State OAH**: California OAH Special Education; MVP slice is San Diego
-  Unified (last ~5 years), expandable to 2013→present / statewide. See
+- **State OAH**: California OAH Special Education; statewide MVP (LEA as
+  metadata; last ~5 years), expandable to 2013→present. See
   [`docs/oah-decision-corpus.md`](./docs/oah-decision-corpus.md).
 - **Embedding model**: which embedding model for the RAG corpus (e.g. a
   Bedrock embedding model vs. another provider) — not yet finalized.

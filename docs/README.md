@@ -6,7 +6,7 @@ detailed or more likely to change than the top-level `../ARCHITECTURE.md`.
 Documents:
 
 - [`oah-decision-corpus.md`](./oah-decision-corpus.md) — locked MVP scope
-  for California OAH published due process decisions (San Diego–focused,
+  for California OAH published due process decisions (statewide MVP,
   official PDF sources, time range).
 
 Planned:
