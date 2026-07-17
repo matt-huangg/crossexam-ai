@@ -10,7 +10,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from ingest.common.models import HearingDecision
+from ingest.models import HearingDecision
 
 DEFAULT_LEA_FILTERS = (
     "San Diego Unified",

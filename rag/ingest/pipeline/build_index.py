@@ -27,8 +27,8 @@ from pathlib import Path
 import chromadb
 from chromadb.api.models.Collection import Collection
 
-from ingest.common.cache import PROCESSED_DIR, load_models
-from ingest.common.models import LegalChunk
+from ingest.cache import PROCESSED_DIR, load_models
+from ingest.models import LegalChunk
 
 CHUNKS_PATH = PROCESSED_DIR / "chunks.json"
 

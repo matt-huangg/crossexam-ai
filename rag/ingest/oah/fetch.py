@@ -13,8 +13,8 @@ from __future__ import annotations
 
 import httpx
 
-from ingest.common.cache import PROCESSED_DIR, RAW_DIR, load_models, save_models
-from ingest.common.models import HearingDecision
+from ingest.cache import PROCESSED_DIR, RAW_DIR, load_models, save_models
+from ingest.models import HearingDecision
 from ingest.oah.discovery import list_candidate_pdf_urls
 from ingest.oah.parse import DEFAULT_LEA_FILTERS, matches_lea_filters, parse_decision
 from ingest.oah.pdf import download_pdf, extract_text_from_pdf

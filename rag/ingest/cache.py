@@ -13,10 +13,10 @@ from typing import TypeVar
 
 from pydantic import BaseModel
 
-from ingest.common.models import LegalSection
+from ingest.models import LegalSection
 
-# common/ -> ingest/ -> rag/
-RAG_DIR = Path(__file__).resolve().parents[2]
+# ingest/ -> rag/
+RAG_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = RAG_DIR / "data"
 RAW_DIR = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"

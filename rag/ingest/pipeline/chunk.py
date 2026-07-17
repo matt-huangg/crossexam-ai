@@ -27,8 +27,8 @@ from __future__ import annotations
 
 import re
 
-from ingest.common.cache import PROCESSED_DIR, load_processed, save_models
-from ingest.common.models import LegalChunk, LegalSection
+from ingest.cache import PROCESSED_DIR, load_processed, save_models
+from ingest.models import LegalChunk, LegalSection
 
 STATUTE_PROCESSED_PATH = PROCESSED_DIR / "20-usc-ch33.json"
 CFR_PROCESSED_PATH = PROCESSED_DIR / "34-cfr-300.json"

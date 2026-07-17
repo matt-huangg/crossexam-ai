@@ -13,7 +13,8 @@ uv run python -m ingest.oah.fetch
 
 ```
 ingest/
-  common/      # models, cache paths
+  models.py    # LegalSection, LegalChunk, HearingDecision
+  cache.py     # data/raw + data/processed helpers
   federal/     # statute + CFR fetchers
   oah/         # CA OAH decisions (discovery, pdf, parse, fetch)
   pipeline/    # chunk + Chroma index

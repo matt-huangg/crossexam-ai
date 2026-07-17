@@ -42,7 +42,7 @@ import xml.etree.ElementTree as ET
 
 import httpx
 
-from ingest.common.cache import (
+from ingest.cache import (
     PROCESSED_DIR,
     RAW_DIR,
     load_meta,
@@ -52,7 +52,7 @@ from ingest.common.cache import (
     save_processed,
     save_raw_text,
 )
-from ingest.common.models import LegalSection
+from ingest.models import LegalSection
 
 TITLES_URL = "https://www.ecfr.gov/api/versioner/v1/titles.json"
 FULL_TEXT_URL_TEMPLATE = "https://www.ecfr.gov/api/versioner/v1/full/{date}/title-34.xml"
