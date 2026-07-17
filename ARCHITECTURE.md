@@ -95,10 +95,10 @@ and grounding a different kind of output:
 
 ### Why ingestion parsing is deterministic code, not LLM-assisted
 
-`fetch_cfr.py`, `fetch_statute.py`, and the decision-loading logic that
-extract section/citation text from raw XML/HTML are, and must remain,
-plain deterministic parsing code — not an LLM asked to "read and extract
-the text." An LLM doing that extraction could paraphrase, drop a
+`rag/ingest/federal/fetch_cfr.py`, `fetch_statute.py`, and
+`rag/ingest/oah/` (PDF extract + parse) that pull section/citation text
+from raw XML/HTML/PDF are, and must remain, plain deterministic parsing
+code — not an LLM asked to "read and extract the text." An LLM doing that extraction could paraphrase, drop a
 qualifying clause, or misattribute a section number, and there would be no
 way to detect it. That corrupted text would then become the "ground
 truth" every hearing officer ruling and opposing counsel objection cites as

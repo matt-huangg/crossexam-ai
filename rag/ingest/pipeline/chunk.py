@@ -27,8 +27,8 @@ from __future__ import annotations
 
 import re
 
-from cache import PROCESSED_DIR, load_processed, save_models
-from models import LegalChunk, LegalSection
+from ingest.common.cache import PROCESSED_DIR, load_processed, save_models
+from ingest.common.models import LegalChunk, LegalSection
 
 STATUTE_PROCESSED_PATH = PROCESSED_DIR / "20-usc-ch33.json"
 CFR_PROCESSED_PATH = PROCESSED_DIR / "34-cfr-300.json"
@@ -220,7 +220,8 @@ def chunk_sections(sections: list[LegalSection]) -> list[LegalChunk]:
 def main() -> list[LegalChunk]:
     """Load cached LegalSections, chunk them, and write `chunks.json`.
 
-    Expects `fetch_statute.py` and `fetch_cfr.py` to have already populated
+    Expects `ingest.federal.fetch_statute` and `ingest.federal.fetch_cfr` to
+    have already populated
     the processed JSON caches. Re-run those first if this raises FileNotFoundError.
     """
     statute = load_processed(STATUTE_PROCESSED_PATH)
@@ -232,8 +233,9 @@ def main() -> list[LegalChunk]:
         if cfr is None:
             missing.append(str(CFR_PROCESSED_PATH))
         raise FileNotFoundError(
-            "Missing processed section cache. Run fetch_statute.py and "
-            f"fetch_cfr.py first. Missing: {', '.join(missing)}"
+            "Missing processed section cache. Run "
+            "`python -m ingest.federal.fetch_statute` and "
+            f"`python -m ingest.federal.fetch_cfr` first. Missing: {', '.join(missing)}"
         )
 
     chunks = chunk_sections(statute + cfr)

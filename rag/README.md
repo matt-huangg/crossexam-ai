@@ -3,11 +3,10 @@
 Corpus ingestion and local embedding pipeline for the three corpora described
 in `../ARCHITECTURE.md`:
 
-- IDEA statute + 34 CFR Part 300 (federal, public domain) — **ingest + local
-  Chroma index working** (`ingest/fetch_*.py`, `chunk.py`, `build_index.py`)
+- IDEA statute + 34 CFR Part 300 (federal, public domain) — ingest + local
+  Chroma index under `ingest/federal/` + `ingest/pipeline/`
 - Published due process hearing decisions from California OAH (public
-  record) — **scope locked**, fetcher stubbed (`ingest/fetch_decisions.py`;
-  see `../docs/oah-decision-corpus.md`)
+  record) — under `ingest/oah/` (see `../docs/oah-decision-corpus.md`)
 - Per-session case file handling (synthetic/hypothetical only — see the
   "No real case data, ever" constraint in `../README.md`)
 
@@ -18,11 +17,19 @@ model (e.g. Bedrock Titan) and/or ship the index to S3.
 ## Rebuild federal-law index
 
 ```bash
-cd rag/ingest
-uv run python fetch_statute.py   # caches to data/raw + data/processed
-uv run python fetch_cfr.py
-uv run python chunk.py
-uv run python build_index.py     # writes index/chroma, runs smoke queries
+cd rag
+uv run python -m ingest.federal.fetch_statute
+uv run python -m ingest.federal.fetch_cfr
+uv run python -m ingest.pipeline.chunk
+uv run python -m ingest.pipeline.build_index
 ```
 
-See `../ARCHITECTURE.md` for RAG design and `../ROADMAP.md` for sequencing.
+## OAH decisions
+
+```bash
+cd rag
+uv run python -m ingest.oah.fetch
+```
+
+See `ingest/README.md` for package layout, `../ARCHITECTURE.md` for RAG
+design, and `../ROADMAP.md` for sequencing.

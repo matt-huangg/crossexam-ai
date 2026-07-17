@@ -28,7 +28,7 @@ import re
 import httpx
 from bs4 import BeautifulSoup
 
-from cache import (
+from ingest.common.cache import (
     PROCESSED_DIR,
     RAW_DIR,
     load_processed,
@@ -36,7 +36,7 @@ from cache import (
     save_processed,
     save_raw_text,
 )
-from models import LegalSection
+from ingest.common.models import LegalSection
 
 CHAPTER_URL = (
     "https://uscode.house.gov/view.xhtml"

@@ -16,7 +16,7 @@ Groundwork that everything else depends on.
       — see `docs/`. No real case data at any point, including here.
 - [x] Ingest and embed IDEA statute + 34 CFR Part 300 (`rag/`).
 - [ ] Ingest and embed the chosen state's published due process decisions
-      (`rag/`). Stub: `rag/ingest/fetch_decisions.py`.
+      (`rag/ingest/oah/`).
 - [ ] Build 1–2 fully synthetic demo case files for development/testing.
 - [ ] Stand up the LangGraph state machine skeleton (`backend/`) with the
       four persona nodes as stubs (no retrieval yet).

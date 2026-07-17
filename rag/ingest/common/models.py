@@ -1,8 +1,9 @@
 """Shared record shapes used across the ingestion pipeline.
 
 Keeping this separate (rather than defining LegalSection / HearingDecision
-inside individual fetch_*.py modules) means chunk.py and build_index.py can
-depend on one stable shape regardless of which fetcher produced it.
+inside federal/ or oah/ modules) means pipeline/chunk.py and
+pipeline/build_index.py can depend on one stable shape regardless of which
+fetcher produced it.
 
 Uses pydantic rather than a plain dataclass for two reasons:
   1. Runtime validation - if a bug in parse_sections() ever produces a

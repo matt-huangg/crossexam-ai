@@ -64,9 +64,14 @@ not scrape a city-specific portal.
 - Do **not** embed LLM-written summaries as the authoritative passage;
   retrieve and cite exact extracted text.
 
-## Implementation entry point
+## Implementation entry points
 
-Stub: [`../rag/ingest/fetch_decisions.py`](../rag/ingest/fetch_decisions.py)
+| Module | Responsibility |
+|---|---|
+| [`oah/discovery.py`](../rag/ingest/oah/discovery.py) | MediaSearch PDF listing |
+| [`oah/pdf.py`](../rag/ingest/oah/pdf.py) | Download + pymupdf extract |
+| [`oah/parse.py`](../rag/ingest/oah/parse.py) | `HearingDecision` + LEA filter |
+| [`oah/fetch.py`](../rag/ingest/oah/fetch.py) | Orchestrate + cache |
 
 Pipeline target (same shape as federal law):
 

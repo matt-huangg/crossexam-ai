@@ -27,13 +27,13 @@ from pathlib import Path
 import chromadb
 from chromadb.api.models.Collection import Collection
 
-from cache import PROCESSED_DIR, load_models
-from models import LegalChunk
+from ingest.common.cache import PROCESSED_DIR, load_models
+from ingest.common.models import LegalChunk
 
 CHUNKS_PATH = PROCESSED_DIR / "chunks.json"
 
-# rag/ package root (parent of ingest/).
-RAG_DIR = Path(__file__).resolve().parent.parent
+# pipeline/ -> ingest/ -> rag/
+RAG_DIR = Path(__file__).resolve().parents[2]
 # Top-level index folder (gitignored except .gitkeep).
 INDEX_DIR = RAG_DIR / "index"
 # Chroma PersistentClient writes sqlite + segment files here — keep it separate
@@ -54,8 +54,8 @@ def load_chunks(path: Path = CHUNKS_PATH) -> list[LegalChunk]:
     chunks = load_models(path, LegalChunk)
     if chunks is None:
         raise FileNotFoundError(
-            f"Missing {path}. Run chunk.py first (after fetch_statute.py "
-            "and fetch_cfr.py) to produce chunks.json."
+            f"Missing {path}. Run `python -m ingest.pipeline.chunk` first "
+            "(after federal fetchers) to produce chunks.json."
         )
     return chunks
 
