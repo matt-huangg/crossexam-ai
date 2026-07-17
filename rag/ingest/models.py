@@ -75,26 +75,27 @@ class HearingDecision(BaseModel):
 
 
 class LegalChunk(BaseModel):
-    """One retrieval-sized piece of a LegalSection, after chunking.
+    """One retrieval-sized piece of statute, CFR, or OAH decision text.
 
-    Long sections (e.g. 20 U.S.C. § 1415) are split so similarity search
-    returns a focused passage rather than an entire multi-page section.
-    Short sections stay as a single chunk (chunk_index=0, chunk_count=1).
+    Long sources are split so similarity search returns a focused passage
+    rather than an entire multi-page section or decision. Short sources
+    stay as a single chunk (chunk_index=0, chunk_count=1).
 
     Every chunk keeps the parent citation/heading/source_url so a retrieved
     hit can be traced back to the authoritative source without joining
-    another table.
-
-    Note: decision chunks will either extend ``source_type`` to include
-    ``"decision"`` or use a sibling chunk model when fetch_decisions.py
-    is wired into chunk.py / build_index.py.
+    another table. Decision chunks also carry ``case_id`` / ``lea`` /
+    ``decision_date`` (empty strings for statute/CFR).
     """
 
     chunk_id: str = Field(min_length=1)  # stable id, e.g. "34 CFR § 300.503#0"
-    source_type: Literal["statute", "cfr"]
+    source_type: Literal["statute", "cfr", "decision"]
     citation: str = Field(min_length=1)
     heading: str = Field(min_length=1)
     text: str = Field(min_length=1)  # chunk body (may include a citation prefix)
     source_url: str = Field(min_length=1)
     chunk_index: int = Field(ge=0)
     chunk_count: int = Field(ge=1)
+    # Populated for OAH decision chunks; empty for federal-law chunks.
+    case_id: str = Field(default="")
+    lea: str = Field(default="")
+    decision_date: str = Field(default="")

@@ -6,9 +6,9 @@ Corpus ingestion package. Run modules from the `rag/` directory:
 cd rag
 uv run python -m ingest.federal.fetch_statute
 uv run python -m ingest.federal.fetch_cfr
+uv run python -m ingest.oah.fetch
 uv run python -m ingest.pipeline.chunk
 uv run python -m ingest.pipeline.build_index
-uv run python -m ingest.oah.fetch
 ```
 
 ```

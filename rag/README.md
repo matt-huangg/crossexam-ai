@@ -10,9 +10,10 @@ in `../ARCHITECTURE.md`:
 - Per-session case file handling (synthetic/hypothetical only — see the
   "No real case data, ever" constraint in `../README.md`)
 
-Embeddings for the federal-law corpus are stored locally in Chroma under
-`index/chroma/` (gitignored). Production may later swap the embedding
-model (e.g. Bedrock Titan) and/or ship the index to S3.
+Embeddings for statute, CFR, and OAH decision chunks are stored locally in
+Chroma under `index/chroma/` (collection `legal_corpus`, gitignored).
+Production may later swap the embedding model (e.g. Bedrock Titan) and/or
+ship the index to S3.
 
 ## Rebuild federal-law index
 
@@ -20,15 +21,9 @@ model (e.g. Bedrock Titan) and/or ship the index to S3.
 cd rag
 uv run python -m ingest.federal.fetch_statute
 uv run python -m ingest.federal.fetch_cfr
+uv run python -m ingest.oah.fetch
 uv run python -m ingest.pipeline.chunk
 uv run python -m ingest.pipeline.build_index
-```
-
-## OAH decisions
-
-```bash
-cd rag
-uv run python -m ingest.oah.fetch
 ```
 
 See `ingest/README.md` for package layout, `../ARCHITECTURE.md` for RAG

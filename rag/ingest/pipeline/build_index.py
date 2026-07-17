@@ -1,15 +1,15 @@
 """Build a local Chroma index from processed LegalChunk records.
 
-This is the last offline step of the federal-law ingest pipeline:
+This is the last offline step of the ingest pipeline:
 
-  fetch_*  →  LegalSection JSON  →  chunk.py  →  chunks.json  →  build_index.py
-                                                                  ↓
-                                                         rag/index/chroma/ (Chroma)
+  fetch_*  →  section/decision JSON  →  chunk.py  →  chunks.json  →  build_index.py
+                                                                     ↓
+                                                            rag/index/chroma/ (Chroma)
 
 Why local Chroma for now:
 
-  - The corpus is small (~500 chunks) and static — no need for a managed
-    vector DB while we validate retrieval quality.
+  - The corpus is bounded and static — no need for a managed vector DB while
+    we validate retrieval quality.
   - Chroma's DefaultEmbeddingFunction runs a local ONNX MiniLM model, so
     we can develop without AWS/Bedrock credentials.
   - Production can later swap the embedding function (e.g. Bedrock Titan)
@@ -40,12 +40,13 @@ INDEX_DIR = RAG_DIR / "index"
 # from INDEX_DIR root so other index artifacts (manifests, exports) can coexist.
 CHROMA_PERSIST_DIR = INDEX_DIR / "chroma"
 
-COLLECTION_NAME = "federal_law"
+COLLECTION_NAME = "legal_corpus"
 
-# Smoke-test queries chosen to hit known CFR / statute passages.
+# Smoke-test queries: federal passages + an OAH practice-style query.
 SMOKE_QUERIES = [
     "prior written notice content requirements",
     "procedural safeguards due process hearing",
+    "IEP implementation failure to provide services",
 ]
 
 
@@ -76,24 +77,31 @@ def rebuild_collection(
     *,
     client: chromadb.ClientAPI | None = None,
 ) -> Collection:
-    """Replace the federal_law collection with embeddings for `chunks`.
+    """Replace the legal_corpus collection with embeddings for `chunks`.
 
     Deletes any existing collection first so a re-chunk (different chunk_ids
-    or text) cannot leave orphan vectors behind.
+    or text) cannot leave orphan vectors behind. Also drops the legacy
+    ``federal_law`` name if present from earlier builds.
     """
     client = client or get_client()
 
     # Drop the old collection if present. get_collection raises if missing,
     # so we probe via list_collections instead of try/except on every rebuild.
     existing = {c.name for c in client.list_collections()}
-    if COLLECTION_NAME in existing:
-        client.delete_collection(COLLECTION_NAME)
+    for name in (COLLECTION_NAME, "federal_law"):
+        if name in existing:
+            client.delete_collection(name)
 
     # DefaultEmbeddingFunction = local ONNX all-MiniLM-L6-v2. First run may
     # download the model weights; after that it's fully offline.
     collection = client.create_collection(
         name=COLLECTION_NAME,
-        metadata={"description": "IDEA statute (20 U.S.C. Ch. 33) + 34 CFR Part 300"},
+        metadata={
+            "description": (
+                "IDEA statute (20 U.S.C. Ch. 33) + 34 CFR Part 300 + "
+                "CA OAH special-education decisions"
+            )
+        },
     )
 
     ids = [chunk.chunk_id for chunk in chunks]
@@ -107,6 +115,9 @@ def rebuild_collection(
             "source_url": chunk.source_url,
             "chunk_index": chunk.chunk_index,
             "chunk_count": chunk.chunk_count,
+            "case_id": chunk.case_id,
+            "lea": chunk.lea,
+            "decision_date": chunk.decision_date,
         }
         for chunk in chunks
     ]
@@ -131,10 +142,10 @@ def query_collection(
     n_results: int = 3,
     source_type: str | None = None,
 ) -> dict:
-    """Run a similarity search, optionally filtered to statute or cfr only.
+    """Run a similarity search, optionally filtered by ``source_type``.
 
-    `source_type` filter lets persona nodes scope retrieval later (hearing
-    officer / opposing counsel both use this corpus; filtering is optional).
+    `source_type` filter lets persona nodes scope retrieval later
+    (``statute`` / ``cfr`` / ``decision``); filtering is optional.
     """
     where = {"source_type": source_type} if source_type else None
     return collection.query(

@@ -77,5 +77,7 @@ but does **not** hard-filter to one district. Optional `lea_filters` on
 Pipeline target (same shape as federal law):
 
 ```
-fetch PDFs → data/raw/decisions/ → HearingDecision JSON → chunk → Chroma
+fetch PDFs → data/raw/decisions/ → HearingDecision JSON
+  → pipeline/chunk.py (paragraph pack + 400-char overlap)
+  → chunks.json → Chroma collection legal_corpus
 ```
