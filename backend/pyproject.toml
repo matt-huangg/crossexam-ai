@@ -1,0 +1,22 @@
+[project]
+name = "crossexam-backend"
+version = "0.1.0"
+description = "LangGraph cross-examination drill agent for CrossExam AI"
+requires-python = ">=3.11"
+
+# - LangGraph state machine (nodes, edges, shared drill state) -> langgraph
+# - Message types for the transcript (HumanMessage, AIMessage) -> langchain-core
+#
+# No Bedrock / AgentCore deps yet — Step 1 is local state shape only.
+dependencies = [
+    "langgraph>=0.2",
+    "langchain-core>=0.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
