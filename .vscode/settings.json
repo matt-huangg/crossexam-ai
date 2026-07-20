@@ -1,5 +1,11 @@
 {
   "python.defaultInterpreterPath": "${workspaceFolder}/rag/.venv/bin/python",
-  "python.analysis.extraPaths": ["${workspaceFolder}/rag/ingest"],
-  "basedpyright.analysis.extraPaths": ["${workspaceFolder}/rag/ingest"]
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/rag/ingest",
+    "${workspaceFolder}/backend"
+  ],
+  "basedpyright.analysis.extraPaths": [
+    "${workspaceFolder}/rag/ingest",
+    "${workspaceFolder}/backend"
+  ]
 }
