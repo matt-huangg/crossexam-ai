@@ -156,3 +156,7 @@ rag/index/
 !rag/data/raw/.gitkeep
 !rag/data/processed/.gitkeep
 !rag/index/.gitkeep
+
+# macOS Finder metadata
+.DS_Store
+**/.DS_Store

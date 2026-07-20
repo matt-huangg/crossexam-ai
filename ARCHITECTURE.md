@@ -196,7 +196,11 @@ rather than guessed at silently:
 - **State OAH**: California OAH Special Education; statewide MVP (LEA as
   metadata; last ~5 years), expandable to 2013→present. See
   [`docs/oah-decision-corpus.md`](./docs/oah-decision-corpus.md).
-- **Embedding model**: which embedding model for the RAG corpus (e.g. a
-  Bedrock embedding model vs. another provider) — not yet finalized.
+- **Embedding model**: local ONNX MiniLM (Chroma's `DefaultEmbeddingFunction`)
+  for now — avoids needing AWS/Bedrock credentials during development.
+  Production should swap to a Bedrock embedding model (e.g. Titan Text
+  Embeddings V2) for consistency with the Claude/Bedrock model calls
+  elsewhere in the stack; the chunk + metadata shape in `build_index.py`
+  is designed to make that swap a config change, not a rewrite.
 - **Session lifecycle**: precise rules for when an AgentCore Memory session
   is archived/ended vs. kept resumable, given idle-time billing.
