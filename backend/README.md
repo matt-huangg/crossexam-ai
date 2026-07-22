@@ -1,10 +1,7 @@
 # backend
 
-The LangGraph agent that runs the cross-examination drill, deployed later to
-Amazon Bedrock AgentCore Runtime.
-
-Contains the four persona nodes (witness, opposing counsel, hearing officer,
-debrief) and the state machine wiring described in `../ARCHITECTURE.md`.
+LangGraph cross-examination drill — rebuild this yourself to learn the
+primitives. Deps are already in `pyproject.toml` (`langgraph`, `langchain-core`).
 
 ## Setup
 
@@ -13,37 +10,40 @@ cd backend
 uv sync
 ```
 
-## Step status
+## Rebuild order (type it by hand)
 
-**Step 1 — done:** shared drill state — [`graph/state.py`](graph/state.py)
-(`DrillState`).
+Leave `ARCHITECTURE.md` §1 open while you do this — it is the flowchart you
+are encoding.
 
-**Step 2 — done:** one hard-coded witness stub + tiny graph
-`START → witness → END` — [`graph/nodes/witness.py`](graph/nodes/witness.py),
-[`graph/build.py`](graph/build.py).
+1. **`graph/state.py`** — `DrillState` (`TypedDict`)
+   - Fields that multiple nodes will share: `messages`, `current_question`,
+     `objection`, `ruling`, `done`
+   - Use `Annotated[..., add_messages]` on `messages` so appends don't wipe
+     the transcript
 
-**Not yet:** opposing counsel / hearing officer / debrief, conditional edges,
-LLM calls, Chroma retrieval, case files, or AgentCore.
+2. **`graph/nodes/witness.py`** — one stub node
+   - Signature: `state in → partial update dict out`
+   - Hard-coded answer is fine; no LLM yet
 
-### LangGraph primitives (map to the drill)
+3. **`graph/build.py`** — wire the graph
+   - `StateGraph(DrillState)` → `add_node` → `add_edge(START, ...)` →
+     `compile()` → `invoke({...})`
+   - First target: `START → witness → END`
 
-| Primitive | Meaning here |
-|---|---|
-| **State** | `DrillState` — transcript, current question, objection, ruling, done |
-| **Nodes** | Functions that read state and return a **partial update** |
-| **Edges** | Control flow — Step 2 is only linear; branching comes later |
-
-Objections are a **gate**, not free chat — that is why this is a graph, not
-one multi-role prompt. See `../ARCHITECTURE.md` §1.
-
-### Verify Step 2
+4. **`graph/__main__.py`** — call `build.main` so this works:
 
 ```bash
-cd backend
 uv run python -m graph
 ```
 
-You should see a stub witness message that echoes the sample question.
+5. **Next learning step** — add `opposing_counsel` stub, still linear:
 
-See `../ROADMAP.md` Phase 0 for sequencing (more persona stubs next,
-retrieval and AgentCore in Phase 1).
+```text
+START → opposing_counsel → witness → END
+```
+
+Then conditional edges on `objection` / `ruling`.
+
+## Out of scope until the graph feels boring
+
+LLM calls, Chroma retrieval, case files, AgentCore.

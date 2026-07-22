@@ -1,8 +1,7 @@
-"""LangGraph drill package: shared state, stub nodes, compiled graph.
+"""LangGraph drill package — rebuild from scratch for learning.
 
-Step 1: ``DrillState``. Step 2: hard-coded witness stub + START→witness→END.
+Suggested order:
+1. ``graph/state.py`` — ``DrillState``
+2. ``graph/nodes/witness.py`` — first stub node
+3. ``graph/build.py`` — ``StateGraph``, edges, ``compile``, ``invoke``
 """
-
-from graph.state import DrillState
-
-__all__ = ["DrillState"]
