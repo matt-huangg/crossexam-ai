@@ -8,11 +8,12 @@ Documents:
 - [`oah-decision-corpus.md`](./oah-decision-corpus.md) — locked MVP scope
   for California OAH published due process decisions (statewide MVP,
   official PDF sources, time range).
+- [`case-file-schema.md`](./case-file-schema.md) — schema for the per-session
+  synthetic case file (facts, witness role, exhibits) that grounds the
+  witness persona.
 
 Planned:
 
-- `case-file-schema.md` — schema for the per-session synthetic case file
-  (facts, witness role, exhibits) that grounds the witness persona.
 - `persona-design.md` — detailed prompt/behavior design notes for the
   witness, opposing counsel, hearing officer, and debrief personas,
   including the objection-grounds taxonomy and the witness's
